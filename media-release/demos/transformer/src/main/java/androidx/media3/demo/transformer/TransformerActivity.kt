@@ -40,6 +40,7 @@ import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.C
 import androidx.media3.common.DebugViewProvider
@@ -984,11 +985,9 @@ class TransformerActivity : AppCompatActivity() {
         } catch (e: IOException) {
             throw RuntimeException(e)
         }
-//        playMediaItems(
-//            MediaItem.fromUri(inputUri), MediaItem.fromUri(
-//                "file://$filePath"
-//            )
-//        )
+        outputFile?.toUri()?.let {
+            playMediaItems(MediaItem.fromUri(it))
+        }
         Log.d(TAG, "Output file path: file://$filePath")
         try {
             val resultJson =
@@ -1011,53 +1010,51 @@ class TransformerActivity : AppCompatActivity() {
         "outputPlayerView",
         "debugTextView"
     )
-    private fun playMediaItems(inputMediaItem: MediaItem, outputMediaItem: MediaItem) {
+    private fun playMediaItems(outputMediaItem: MediaItem) {
         inputPlayerView!!.player = null
         outputPlayerView!!.player = null
         releasePlayer()
 
-        val uri = Assertions.checkNotNull(inputMediaItem.localConfiguration).uri
         val outputPlayer = ExoPlayer.Builder( /* context= */this).build()
         outputPlayerView!!.player = outputPlayer
-        outputPlayerView!!.controllerAutoShow = false
+        outputPlayerView!!.controllerAutoShow = true
         outputPlayer.setMediaItem(outputMediaItem)
         outputPlayer.prepare()
         this.outputPlayer = outputPlayer
 
-        // Only support showing jpg images.
-        if (uri.toString().endsWith("jpg")) {
-            inputPlayerView!!.visibility = View.GONE
-            inputImageView!!.visibility = View.VISIBLE
-            inputTextView!!.text = getString(R.string.input_image)
-
-            val bitmapLoader: BitmapLoader = DataSourceBitmapLoader(
-                applicationContext
-            )
-            val future = bitmapLoader.loadBitmap(uri)
-            try {
-                val bitmap = future.get()
-                inputImageView!!.setImageBitmap(bitmap)
-            } catch (e: ExecutionException) {
-                throw IllegalArgumentException("Failed to load bitmap.", e)
-            } catch (e: InterruptedException) {
-                throw IllegalArgumentException("Failed to load bitmap.", e)
-            }
-        } else {
-            inputPlayerView!!.visibility = View.VISIBLE
-            inputImageView!!.visibility = View.GONE
-            inputTextView!!.text = getString(R.string.input_video_no_sound)
-
-            val inputPlayer = ExoPlayer.Builder( /* context= */this).build()
-            inputPlayerView!!.player = inputPlayer
-            inputPlayerView!!.controllerAutoShow = false
-            inputPlayerView!!.setOnClickListener { view: View -> this.onClickingPlayerView(view) }
-            outputPlayerView!!.setOnClickListener { view: View -> this.onClickingPlayerView(view) }
-            inputPlayer.setMediaItem(inputMediaItem)
-            inputPlayer.prepare()
-            this.inputPlayer = inputPlayer
-            inputPlayer.volume = 0f
-            inputPlayer.play()
-        }
+//        // Only support showing jpg images.
+//        if (uri.toString().endsWith("jpg")) {
+//            inputPlayerView!!.visibility = View.GONE
+//            inputImageView!!.visibility = View.VISIBLE
+//            inputTextView!!.text = getString(R.string.input_image)
+//
+//            val bitmapLoader: BitmapLoader = DataSourceBitmapLoader(
+//                applicationContext
+//            )
+//            val future = bitmapLoader.loadBitmap(uri)
+//            try {
+//                val bitmap = future.get()
+//                inputImageView!!.setImageBitmap(bitmap)
+//            } catch (e: ExecutionException) {
+//                throw IllegalArgumentException("Failed to load bitmap.", e)
+//            } catch (e: InterruptedException) {
+//                throw IllegalArgumentException("Failed to load bitmap.", e)
+//            }
+//        } else {
+//            inputPlayerView!!.visibility = View.VISIBLE
+//            inputImageView!!.visibility = View.GONE
+//            inputTextView!!.text = getString(R.string.input_video_no_sound)
+//
+//            val inputPlayer = ExoPlayer.Builder( /* context= */this).build()
+//            inputPlayerView!!.player = inputPlayer
+//            inputPlayerView!!.controllerAutoShow = false
+//            inputPlayerView!!.setOnClickListener { view: View -> this.onClickingPlayerView(view) }
+//            outputPlayerView!!.setOnClickListener { view: View -> this.onClickingPlayerView(view) }
+//            inputPlayer.prepare()
+//            this.inputPlayer = inputPlayer
+//            inputPlayer.volume = 0f
+//            inputPlayer.play()
+//        }
         outputPlayer.play()
 
         debugTextViewHelper = DebugTextViewHelper(outputPlayer, debugTextView!!)

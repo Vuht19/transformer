@@ -20,7 +20,7 @@ object Constants {
         "Rotate",
         "Slide Left",
         "Slide Right",
-        "fade",
+        "Fade",
     )
 }
 
