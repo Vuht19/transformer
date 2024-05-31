@@ -36,13 +36,12 @@ class SlideFadeOverlay(private val bitmap: Bitmap, private val presentationOneTi
             } else if (alpha > 1f) {
                 alpha = 1f
             }
-            Log.d("TAG111: ", "getOverlaySettings: $presentationTimeUs $alpha")
             return OverlaySettings.Builder()
                 .setAlphaScale(alpha)
                 .build()
         }
         return OverlaySettings.Builder()
-            .setAlphaScale(0.5f)
+            .setAlphaScale(0f)
             .build()
 
     }

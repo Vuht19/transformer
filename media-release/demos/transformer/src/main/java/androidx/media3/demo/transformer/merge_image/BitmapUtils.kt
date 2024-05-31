@@ -52,7 +52,7 @@ fun Collection<Uri>.mapToBitmapList(
     }
     val map = mutableMapOf<Uri, Bitmap?>()
     bitmapList.forEachIndexed { index, bitmap ->
-        map[this.elementAt(index)] = fitBitmap(bitmap, maxWidth, maxHeight)
+        map[this.elementAt(index)] = bitmap
     }
     return map
 }

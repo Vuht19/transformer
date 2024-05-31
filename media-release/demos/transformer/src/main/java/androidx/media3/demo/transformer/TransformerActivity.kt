@@ -775,14 +775,14 @@ class TransformerActivity : AppCompatActivity() {
                             if (bitmap != null) {
                                 effect = ImmutableList.Builder<Effect>()
                                 effect.add(
+                                    if (transitionVideo == TRANSITION_SLIDE_LEFT) matrixTransformationFactory.createSlideLeftTransition()
+                                    else matrixTransformationFactory.createSlideRightTransition()
+                                )
+                                effect.add(
                                     SlideFadeOverlay.toOverlayEffect(
                                         bitmap,
                                         presentationOneTimeUs.toFloat()
                                     )
-                                )
-                                effect.add(
-                                    if (transitionVideo == TRANSITION_SLIDE_LEFT) matrixTransformationFactory.createSlideLeftTransition()
-                                    else matrixTransformationFactory.createSlideRightTransition()
                                 )
                             }
                             editedMediaList.add(
@@ -810,13 +810,13 @@ class TransformerActivity : AppCompatActivity() {
                             var effect: ImmutableList.Builder<Effect>? = null
                             if (bitmap != null) {
                                 effect = ImmutableList.Builder<Effect>()
+                                effect?.add(matrixTransformationFactory.createSlideFadeTransition())
                                 effect?.add(
                                     SlideFadeOverlay.toOverlayEffect(
                                         bitmap,
                                         presentationOneTimeUs.toFloat()
                                     )
                                 )
-                                effect?.add(matrixTransformationFactory.createSlideFadeTransition())
                             }
                             editedMediaList.add(
                                 createEditedMediaItem(
@@ -970,7 +970,7 @@ class TransformerActivity : AppCompatActivity() {
             getString(R.string.export_completed, elapsedTimeMs / 1000f, filePath)
         progressViewGroup!!.visibility = View.GONE
         debugFrame!!.removeAllViews()
-        inputCardView!!.visibility = View.VISIBLE
+//        inputCardView!!.visibility = View.VISIBLE
         outputPlayerView!!.visibility = View.VISIBLE
         outputVideoTextView!!.visibility = View.VISIBLE
         debugTextView!!.visibility = View.VISIBLE
@@ -1105,9 +1105,9 @@ class TransformerActivity : AppCompatActivity() {
     )
     private fun toggleInputVideoDisplay(view: View) {
         if (inputCardView!!.visibility == View.GONE) {
-            inputCardView!!.visibility = View.VISIBLE
-            displayInputButton!!.text =
-                getString(R.string.hide_input_video)
+//            inputCardView!!.visibility = View.VISIBLE
+//            displayInputButton!!.text =
+//                getString(R.string.hide_input_video)
         } else if (inputCardView!!.visibility == View.VISIBLE) {
             if (inputPlayer != null) {
                 inputPlayer!!.pause()
@@ -1119,7 +1119,7 @@ class TransformerActivity : AppCompatActivity() {
 
     @RequiresNonNull("transformer", "exportStopwatch", "cancelButton", "resumeButton")
     private fun cancelExport(view: View) {
-        transformer!!.cancel()
+        transformer?.cancel()
         transformer = null
         exportStopwatch!!.stop()
         cancelButton!!.visibility = View.GONE
