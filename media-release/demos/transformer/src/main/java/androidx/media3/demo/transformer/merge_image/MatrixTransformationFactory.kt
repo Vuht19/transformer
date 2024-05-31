@@ -29,9 +29,10 @@ internal class MatrixTransformationFactory(private val durationSeconds: Long = 3
         } else {
             presentationTimeUs.toFloat()
         }
-        val scale = displayTimeOfImage / (C.MICROS_PER_SECOND * durationSeconds)
+        var scale = displayTimeOfImage / (C.MICROS_PER_SECOND * durationSeconds)
         if (scale in 0.0..1.0) {
-            transformationMatrix.postScale(scale, scale)
+            scale = (scale * 1.75).toFloat()
+            if (scale <= 1) transformationMatrix.postScale(scale, scale)
         }
         return transformationMatrix
     }
@@ -55,7 +56,7 @@ internal class MatrixTransformationFactory(private val durationSeconds: Long = 3
             presentationTimeUs.toFloat()
         }
         var percentagePreviewed =
-            1f.coerceAtMost((displayTimeOfImage / presentationOneTimeUs)) * 1.5f
+            1f.coerceAtMost((displayTimeOfImage / presentationOneTimeUs)) * 2f
         if (percentagePreviewed > 1) {
             percentagePreviewed = 1f
         }

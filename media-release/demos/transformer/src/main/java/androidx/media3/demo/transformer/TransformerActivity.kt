@@ -62,6 +62,7 @@ import androidx.media3.demo.transformer.merge_image.Constants.TRANSITION_ROTATE
 import androidx.media3.demo.transformer.merge_image.Constants.TRANSITION_SLIDE_LEFT
 import androidx.media3.demo.transformer.merge_image.Constants.TRANSITION_SLIDE_RIGHT
 import androidx.media3.demo.transformer.merge_image.Constants.TRANSITION_ZOOM_IN
+import androidx.media3.demo.transformer.merge_image.FadeOverlay
 import androidx.media3.demo.transformer.merge_image.MatrixTransformationFactory
 import androidx.media3.demo.transformer.merge_image.SlideFadeOverlay
 import androidx.media3.demo.transformer.merge_image.mapToBitmap
@@ -812,7 +813,7 @@ class TransformerActivity : AppCompatActivity() {
                                 effect = ImmutableList.Builder<Effect>()
                                 effect?.add(matrixTransformationFactory.createSlideFadeTransition())
                                 effect?.add(
-                                    SlideFadeOverlay.toOverlayEffect(
+                                    FadeOverlay.toOverlayEffect(
                                         bitmap,
                                         presentationOneTimeUs.toFloat()
                                     )
