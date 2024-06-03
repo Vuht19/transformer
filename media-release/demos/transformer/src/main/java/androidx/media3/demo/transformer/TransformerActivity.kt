@@ -52,20 +52,20 @@ import androidx.media3.common.audio.ChannelMixingAudioProcessor
 import androidx.media3.common.audio.ChannelMixingMatrix
 import androidx.media3.common.audio.SonicAudioProcessor
 import androidx.media3.common.util.Assertions
-import androidx.media3.common.util.BitmapLoader
 import androidx.media3.common.util.Log
 import androidx.media3.common.util.Util
-import androidx.media3.datasource.DataSourceBitmapLoader
 import androidx.media3.demo.transformer.merge_image.Constants
 import androidx.media3.demo.transformer.merge_image.Constants.TRANSITION_FADE
 import androidx.media3.demo.transformer.merge_image.Constants.TRANSITION_ROTATE
 import androidx.media3.demo.transformer.merge_image.Constants.TRANSITION_SLIDE_LEFT
 import androidx.media3.demo.transformer.merge_image.Constants.TRANSITION_SLIDE_RIGHT
 import androidx.media3.demo.transformer.merge_image.Constants.TRANSITION_ZOOM_IN
+import androidx.media3.demo.transformer.merge_image.FadeOverlay
 import androidx.media3.demo.transformer.merge_image.MatrixTransformationFactory
 import androidx.media3.demo.transformer.merge_image.SlideFadeOverlay
-import androidx.media3.demo.transformer.merge_image.mapToBitmap
-import androidx.media3.demo.transformer.merge_image.mapToBitmapList
+import androidx.media3.demo.transformer.merge_image.fitBitmap
+import androidx.media3.demo.transformer.merge_image.mapToBitmapAutoResized
+import androidx.media3.demo.transformer.merge_image.mapToBitmapDictionary
 import androidx.media3.effect.BitmapOverlay
 import androidx.media3.effect.Contrast
 import androidx.media3.effect.DebugTraceUtil
@@ -120,7 +120,6 @@ import java.io.IOException
 import java.util.Arrays
 import java.util.LinkedList
 import java.util.concurrent.CountDownLatch
-import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 
 /** An [Activity] that exports and plays media using [Transformer].  */
@@ -385,83 +384,86 @@ class TransformerActivity : AppCompatActivity() {
     )
     private fun startComposition(bundle: Bundle?) {
         bundle?.let {
-            createEditedMediaItemList(
-                it,
-                ConfigurationActivity.localFileUriList
-            ) { editedMediaItemList ->
-                //Audio Effect
-                var backgroundAudioSequence: EditedMediaItemSequence? = null
-                val audioUri = ConfigurationActivity.selectedAudioUri
-                if (audioUri != null) {
-                    val backgroundAudio = EditedMediaItem.Builder(
-                        MediaItem.Builder()
-                            .setUri(audioUri)
+            lifecycleScope.launch(Dispatchers.IO) {
+                createEditedMediaItemList(
+                    it,
+                    ConfigurationActivity.localFileUriList
+                ) { editedMediaItemList ->
+                    //Audio Effect
+                    var backgroundAudioSequence: EditedMediaItemSequence? = null
+                    val audioUri = ConfigurationActivity.selectedAudioUri
+                    if (audioUri != null) {
+                        val backgroundAudio = EditedMediaItem.Builder(
+                            MediaItem.Builder()
+                                .setUri(audioUri)
 //                    .setClippingConfiguration(
 //                        ClippingConfiguration.Builder()
 //                            .setStartPositionMs(10_000)
 //                            .setStartPositionMs(20_000)
 //                            .build()
 //                    )
-                            .build()
+                                .build()
 
-                    ).build()
-                    backgroundAudioSequence =
-                        EditedMediaItemSequence(
-                            ImmutableList.of(backgroundAudio),/* isLooping= */
-                            true
-                        )
+                        ).build()
+                        backgroundAudioSequence =
+                            EditedMediaItemSequence(
+                                ImmutableList.of(backgroundAudio),/* isLooping= */
+                                true
+                            )
 
-                }
-
-                val compositionBuilder = if (backgroundAudioSequence != null) {
-                    Composition.Builder(
-                        EditedMediaItemSequence(editedMediaItemList),
-                        backgroundAudioSequence
-                    )
-                } else {
-                    Composition.Builder(
-                        EditedMediaItemSequence(editedMediaItemList),
-                    )
-                }
-                compositionBuilder
-                    .setHdrMode(bundle.getInt(ConfigurationActivity.HDR_MODE))
-                    .experimentalSetForceAudioTrack(
-                        bundle.getBoolean(ConfigurationActivity.FORCE_AUDIO_TRACK)
-                    )
-
-                // Setup transformer
-                val outputFilePath = outputFile!!.absolutePath
-                val composition = compositionBuilder.build()
-                if (transformer == null) transformer = createTransformer(bundle, outputFilePath)
-                transformer?.let {
-                    if (oldOutputFile == null) {
-                        it.start(composition, outputFilePath)
-                    } else {
-                        it.resume(
-                            composition,
-                            outputFilePath,
-                            oldOutputFile!!.absolutePath
-                        )
                     }
 
-                    //Progress
-                    val progressHolder = ProgressHolder()
-                    mainHandler.post(
-                        object : Runnable {
-                            override fun run() {
-                                if (transformer != null
-                                    && it.getProgress(progressHolder) != Transformer.PROGRESS_STATE_NOT_STARTED
-                                ) {
-                                    progressIndicator!!.progress = progressHolder.progress
-                                    informationTextView!!.text = getString(
-                                        R.string.export_timer, exportStopwatch!!.elapsed(
-                                            TimeUnit.SECONDS
-                                        )
-                                    )
-                                    mainHandler.postDelayed( /* r= */this,  /* delayMillis= */500)
-                                }
+                    val compositionBuilder = if (backgroundAudioSequence != null) {
+                        Composition.Builder(
+                            EditedMediaItemSequence(editedMediaItemList),
+                            backgroundAudioSequence
+                        )
+                    } else {
+                        Composition.Builder(
+                            EditedMediaItemSequence(editedMediaItemList),
+                        )
+                    }
+                    compositionBuilder
+//                        .setHdrMode(bundle.getInt(ConfigurationActivity.HDR_MODE))
+                    /*.experimentalSetForceAudioTrack(
+                        bundle.getBoolean(ConfigurationActivity.FORCE_AUDIO_TRACK)
+                    )*/
+                    // Setup transformer
+                    val outputFilePath = outputFile!!.absolutePath
+                    val composition = compositionBuilder.build()
+                    if (transformer == null) transformer = createTransformer(bundle, outputFilePath)
+                    transformer?.let {
+                        mainHandler.post {
+                            if (oldOutputFile == null) {
+                                it.start(composition, outputFilePath)
+                            } else {
+                                it.resume(
+                                    composition,
+                                    outputFilePath,
+                                    oldOutputFile!!.absolutePath
+                                )
                             }
-                        })
+                        }
+
+                        //Progress
+                        val progressHolder = ProgressHolder()
+                        mainHandler.postDelayed(
+                            object : Runnable {
+                                override fun run() {
+                                    if (transformer != null
+                                        && it.getProgress(progressHolder) != Transformer.PROGRESS_STATE_NOT_STARTED
+                                    ) {
+                                        progressIndicator!!.progress = progressHolder.progress
+                                        informationTextView!!.text = getString(
+                                            R.string.export_timer, exportStopwatch!!.elapsed(
+                                                TimeUnit.SECONDS
+                                            )
+                                        )
+                                        mainHandler.postDelayed( /* r= */this,  /* delayMillis= */500)
+                                    }
+                                }
+                            }, 500)
+                    }
                 }
             }
         }
@@ -735,7 +737,9 @@ class TransformerActivity : AppCompatActivity() {
         if (uriList == null) return
         var editedMediaItems: List<EditedMediaItem>
         val transitionVideo = bundle.getInt(Constants.KEY_TRANSITION_VIDEO, -1)
+        val height = bundle.getInt(ConfigurationActivity.RESOLUTION_HEIGHT, -1)
         if (transitionVideo > -1) {
+            val presentationOneTimeUs_Float = presentationOneTimeUs.toFloat()
             when (transitionVideo) {
                 TRANSITION_ZOOM_IN -> {
                     val effect = ImmutableList.Builder<Effect>()
@@ -768,7 +772,7 @@ class TransformerActivity : AppCompatActivity() {
                         android.util.Log.d(TAG, "createVideoTransitionFromBundle: $throwable")
                     }) {
                         val editedMediaList: LinkedList<EditedMediaItem> = LinkedList()
-                        val mapToBitmapMap = uriList.mapToBitmapList(contentResolver)
+                        val mapToBitmapMap = uriList.mapToBitmapAutoResized(contentResolver)
 
                         mapToBitmapMap.forEach { (uri, bitmap) ->
                             var effect: ImmutableList.Builder<Effect>? = null
@@ -781,7 +785,7 @@ class TransformerActivity : AppCompatActivity() {
                                 effect.add(
                                     SlideFadeOverlay.toOverlayEffect(
                                         bitmap,
-                                        presentationOneTimeUs.toFloat()
+                                        presentationOneTimeUs_Float
                                     )
                                 )
                             }
@@ -804,29 +808,47 @@ class TransformerActivity : AppCompatActivity() {
                     lifecycleScope.launch(Dispatchers.IO + CoroutineExceptionHandler { _, throwable ->
                         android.util.Log.d(TAG, "createVideoTransitionFromBundle: $throwable")
                     }) {
-                        val mapToBitmapMap = uriList.mapToBitmapList(contentResolver)
+                        var maxHeight = 0
+                        var maxWidth = 0
+                        val mapToBitmapMap = uriList.mapToBitmapDictionary(contentResolver) {
+                            if (it.width > maxWidth) maxWidth = it.width
+                            if (it.height > maxHeight) maxHeight = it.height
+                        }
                         val editedMediaList: LinkedList<EditedMediaItem> = LinkedList()
-                        mapToBitmapMap.forEach { (uri, bitmap) ->
-                            var effect: ImmutableList.Builder<Effect>? = null
+                        var prevBitmap: Bitmap? = null
+                        var prevUri: Uri? = null
+                        uriList.forEach { uri ->
+                            if (prevUri == null) {
+                                prevUri = uri
+                                return@forEach //continue
+                            }
+                            val bitmap = mapToBitmapMap[uri]?.let { fitBitmap(it, maxWidth, maxHeight) }
+                            val effect = ImmutableList.Builder<Effect>()
+                            effect.add(Presentation.createForWidthAndHeight(maxWidth, maxHeight, Presentation.LAYOUT_SCALE_TO_FIT))
                             if (bitmap != null) {
-                                effect = ImmutableList.Builder<Effect>()
-                                effect?.add(matrixTransformationFactory.createSlideFadeTransition())
-                                effect?.add(
-                                    SlideFadeOverlay.toOverlayEffect(
+//                                effect?.add(matrixTransformationFactory.createSlideFadeTransition())
+                                effect.add(
+                                    FadeOverlay.toOverlayEffect(
                                         bitmap,
-                                        presentationOneTimeUs.toFloat()
+                                        presentationOneTimeUs_Float
                                     )
                                 )
                             }
                             editedMediaList.add(
                                 createEditedMediaItem(
                                     bundle,
-                                    uri,
+                                    prevUri!!,
                                     effect
                                 )
                             )
+                            prevUri = uri
                         }
-                        editedMediaItems = editedMediaList.toList()
+                        prevUri?.let {
+                            editedMediaList.add(
+                                createEditedMediaItem(bundle, prevUri!!)
+                            )
+                        }
+                        editedMediaItems = editedMediaList
                         withContext(Dispatchers.Main) {
                             callback.invoke(editedMediaItems)
                         }
@@ -846,14 +868,14 @@ class TransformerActivity : AppCompatActivity() {
     ): EditedMediaItem {
         return EditedMediaItem.Builder(createMediaItem(bundle, uri)).apply {
             // For image inputs. Automatically ignored if input is audio/video.
-            setDurationUs(presentationOneTimeUs).setFrameRate(30)
+            setDurationUs(presentationOneTimeUs).setFrameRate(20)
             if (bundle != null) {
                 val audioProcessors = createAudioProcessorsFromBundle(bundle)
-                this.setRemoveAudio(bundle.getBoolean(ConfigurationActivity.SHOULD_REMOVE_AUDIO))
+                this.setRemoveAudio(true)
                     .setRemoveVideo(bundle.getBoolean(ConfigurationActivity.SHOULD_REMOVE_VIDEO))
-                    .setFlattenForSlowMotion(
-                        bundle.getBoolean(ConfigurationActivity.SHOULD_FLATTEN_FOR_SLOW_MOTION)
-                    )
+                    /*   .setFlattenForSlowMotion(
+                           bundle.getBoolean(ConfigurationActivity.SHOULD_FLATTEN_FOR_SLOW_MOTION)
+                       )*/
                     .setEffects(
                         Effects(
                             audioProcessors,
