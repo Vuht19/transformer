@@ -16,6 +16,7 @@
 package androidx.media3.demo.transformer
 
 import android.Manifest.permission
+import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -109,6 +110,7 @@ class ConfigurationActivity : AppCompatActivity() {
     private var textOverlayTextColor = 0
     private var textOverlayAlpha = 0f
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.configuration_activity)
@@ -155,6 +157,12 @@ class ConfigurationActivity : AppCompatActivity() {
 
         findViewById<View>(R.id.select_audio_file).setOnClickListener { view: View ->
             this.selectAudioFile(audioResultLauncher!!)
+        }
+
+        findViewById<Button>(R.id.clear_data_button).setOnClickListener {
+            selectedFileTextView?.text = ""
+            localFileUriList = null
+            selectedAudioUri = null
         }
 
         selectLocalFileButton =
@@ -350,81 +358,86 @@ class ConfigurationActivity : AppCompatActivity() {
         "videoEffectsSelections"
     )
     private fun startExport(view: View) {
+        if (localFileUriList.isNullOrEmpty()) {
+            Toast.makeText(this, "Please select image", Toast.LENGTH_SHORT).show()
+            return
+        }
         val transformerIntent = Intent( /* packageContext= */this, TransformerActivity::class.java)
         val bundle = Bundle()
-        bundle.putBoolean(SHOULD_REMOVE_AUDIO, removeAudioCheckbox!!.isChecked)
-        bundle.putBoolean(SHOULD_REMOVE_VIDEO, removeVideoCheckbox!!.isChecked)
-        bundle.putBoolean(SHOULD_FLATTEN_FOR_SLOW_MOTION, flattenForSlowMotionCheckbox!!.isChecked)
-        bundle.putBoolean(FORCE_AUDIO_TRACK, forceAudioTrackCheckbox!!.isChecked)
-        val selectedAudioMimeType = audioMimeSpinner!!.selectedItem.toString()
-        if (SAME_AS_INPUT_OPTION != selectedAudioMimeType) {
-            bundle.putString(AUDIO_MIME_TYPE, selectedAudioMimeType)
-        }
-        val selectedVideoMimeType = videoMimeSpinner!!.selectedItem.toString()
-        if (SAME_AS_INPUT_OPTION != selectedVideoMimeType) {
-            bundle.putString(VIDEO_MIME_TYPE, selectedVideoMimeType)
-        }
-        val selectedResolutionHeight = resolutionHeightSpinner!!.selectedItem.toString()
-        if (SAME_AS_INPUT_OPTION != selectedResolutionHeight) {
-            bundle.putInt(RESOLUTION_HEIGHT, selectedResolutionHeight.toInt())
-        }
-        val selectedScale = scaleSpinner!!.selectedItem.toString()
-        if (SAME_AS_INPUT_OPTION != selectedScale) {
-            val scaleXY =
-                Arrays.asList(*selectedScale.split(", ".toRegex()).dropLastWhile { it.isEmpty() }
-                    .toTypedArray())
-            Assertions.checkState(scaleXY.size == 2)
-            bundle.putFloat(SCALE_X, scaleXY[0].toFloat())
-            bundle.putFloat(SCALE_Y, scaleXY[1].toFloat())
-        }
-        val selectedRotate = rotateSpinner!!.selectedItem.toString()
-        if (SAME_AS_INPUT_OPTION != selectedRotate) {
-            bundle.putFloat(ROTATE_DEGREES, selectedRotate.toFloat())
-        }
-        if (trimCheckBox!!.isChecked) {
-            bundle.putLong(TRIM_START_MS, trimStartMs)
-            bundle.putLong(TRIM_END_MS, trimEndMs)
-        }
+//        bundle.putBoolean(SHOULD_REMOVE_AUDIO, removeAudioCheckbox!!.isChecked)
+//        bundle.putBoolean(SHOULD_REMOVE_VIDEO, removeVideoCheckbox!!.isChecked)
+//        bundle.putBoolean(SHOULD_FLATTEN_FOR_SLOW_MOTION, flattenForSlowMotionCheckbox!!.isChecked)
+//        bundle.putBoolean(FORCE_AUDIO_TRACK, forceAudioTrackCheckbox!!.isChecked)
+//        val selectedAudioMimeType = audioMimeSpinner!!.selectedItem.toString()
+//        if (SAME_AS_INPUT_OPTION != selectedAudioMimeType) {
+//            bundle.putString(AUDIO_MIME_TYPE, selectedAudioMimeType)
+//        }
+//        val selectedVideoMimeType = videoMimeSpinner!!.selectedItem.toString()
+//        if (SAME_AS_INPUT_OPTION != selectedVideoMimeType) {
+//            bundle.putString(VIDEO_MIME_TYPE, selectedVideoMimeType)
+//        }
+//        val selectedResolutionHeight = resolutionHeightSpinner!!.selectedItem.toString()
+//        if (SAME_AS_INPUT_OPTION != selectedResolutionHeight) {
+//            bundle.putInt(RESOLUTION_HEIGHT, selectedResolutionHeight.toInt())
+//        }
+
+
+//        val selectedScale = scaleSpinner!!.selectedItem.toString()
+//        if (SAME_AS_INPUT_OPTION != selectedScale) {
+//            val scaleXY =
+//                Arrays.asList(*selectedScale.split(", ".toRegex()).dropLastWhile { it.isEmpty() }
+//                    .toTypedArray())
+//            Assertions.checkState(scaleXY.size == 2)
+//            bundle.putFloat(SCALE_X, scaleXY[0].toFloat())
+//            bundle.putFloat(SCALE_Y, scaleXY[1].toFloat())
+//        }
+//        val selectedRotate = rotateSpinner!!.selectedItem.toString()
+//        if (SAME_AS_INPUT_OPTION != selectedRotate) {
+//            bundle.putFloat(ROTATE_DEGREES, selectedRotate.toFloat())
+//        }
+//        if (trimCheckBox!!.isChecked) {
+//            bundle.putLong(TRIM_START_MS, trimStartMs)
+//            bundle.putLong(TRIM_END_MS, trimEndMs)
+//        }
         bundle.putBoolean(ENABLE_FALLBACK, enableFallbackCheckBox!!.isChecked)
         bundle.putBoolean(ENABLE_DEBUG_PREVIEW, enableDebugPreviewCheckBox!!.isChecked)
-        bundle.putBoolean(ABORT_SLOW_EXPORT, abortSlowExportCheckBox!!.isChecked)
-        bundle.putBoolean(PRODUCE_FRAGMENTED_MP4, produceFragmentedMp4CheckBox!!.isChecked)
-        val selectedhdrMode = hdrModeSpinner!!.selectedItem.toString()
-        bundle.putInt(
-            HDR_MODE, Assertions.checkNotNull(
-                HDR_MODE_DESCRIPTIONS[selectedhdrMode]
-            )
-        )
-        bundle.putBooleanArray(AUDIO_EFFECTS_SELECTIONS, audioEffectsSelections)
-        bundle.putBooleanArray(VIDEO_EFFECTS_SELECTIONS, videoEffectsSelections)
-        bundle.putInt(COLOR_FILTER_SELECTION, colorFilterSelection)
-        bundle.putFloat(CONTRAST_VALUE, contrastValue)
-        bundle.putFloat(RGB_ADJUSTMENT_RED_SCALE, rgbAdjustmentRedScale)
-        bundle.putFloat(RGB_ADJUSTMENT_GREEN_SCALE, rgbAdjustmentGreenScale)
-        bundle.putFloat(RGB_ADJUSTMENT_BLUE_SCALE, rgbAdjustmentBlueScale)
-        bundle.putFloat(HSL_ADJUSTMENTS_HUE, hueAdjustment)
-        bundle.putFloat(HSL_ADJUSTMENTS_SATURATION, saturationAdjustment)
-        bundle.putFloat(HSL_ADJUSTMENTS_LIGHTNESS, lightnessAdjustment)
-        bundle.putFloat(PERIODIC_VIGNETTE_CENTER_X, periodicVignetteCenterX)
-        bundle.putFloat(PERIODIC_VIGNETTE_CENTER_Y, periodicVignetteCenterY)
-        bundle.putFloat(PERIODIC_VIGNETTE_INNER_RADIUS, periodicVignetteInnerRadius)
-        bundle.putFloat(PERIODIC_VIGNETTE_OUTER_RADIUS, periodicVignetteOuterRadius)
-        bundle.putString(BITMAP_OVERLAY_URI, bitmapOverlayUri)
-        bundle.putFloat(BITMAP_OVERLAY_ALPHA, bitmapOverlayAlpha)
-        bundle.putString(TEXT_OVERLAY_TEXT, textOverlayText)
-        bundle.putInt(TEXT_OVERLAY_TEXT_COLOR, textOverlayTextColor)
-        bundle.putFloat(TEXT_OVERLAY_ALPHA, textOverlayAlpha)
+//        bundle.putBoolean(ABORT_SLOW_EXPORT, abortSlowExportCheckBox!!.isChecked)
+//        bundle.putBoolean(PRODUCE_FRAGMENTED_MP4, produceFragmentedMp4CheckBox!!.isChecked)
+//        val selectedhdrMode = hdrModeSpinner!!.selectedItem.toString()
+//        bundle.putInt(
+//            HDR_MODE, Assertions.checkNotNull(
+//                HDR_MODE_DESCRIPTIONS[selectedhdrMode]
+//            )
+//        )
+         bundle.putBooleanArray(AUDIO_EFFECTS_SELECTIONS, audioEffectsSelections)
+//        bundle.putBooleanArray(VIDEO_EFFECTS_SELECTIONS, videoEffectsSelections)
+//        bundle.putInt(COLOR_FILTER_SELECTION, colorFilterSelection)
+//        bundle.putFloat(CONTRAST_VALUE, contrastValue)
+//        bundle.putFloat(RGB_ADJUSTMENT_RED_SCALE, rgbAdjustmentRedScale)
+//        bundle.putFloat(RGB_ADJUSTMENT_GREEN_SCALE, rgbAdjustmentGreenScale)
+//        bundle.putFloat(RGB_ADJUSTMENT_BLUE_SCALE, rgbAdjustmentBlueScale)
+//        bundle.putFloat(HSL_ADJUSTMENTS_HUE, hueAdjustment)
+//        bundle.putFloat(HSL_ADJUSTMENTS_SATURATION, saturationAdjustment)
+//        bundle.putFloat(HSL_ADJUSTMENTS_LIGHTNESS, lightnessAdjustment)
+//        bundle.putFloat(PERIODIC_VIGNETTE_CENTER_X, periodicVignetteCenterX)
+//        bundle.putFloat(PERIODIC_VIGNETTE_CENTER_Y, periodicVignetteCenterY)
+//        bundle.putFloat(PERIODIC_VIGNETTE_INNER_RADIUS, periodicVignetteInnerRadius)
+//        bundle.putFloat(PERIODIC_VIGNETTE_OUTER_RADIUS, periodicVignetteOuterRadius)
+//        bundle.putString(BITMAP_OVERLAY_URI, bitmapOverlayUri)
+//        bundle.putFloat(BITMAP_OVERLAY_ALPHA, bitmapOverlayAlpha)
+//        bundle.putString(TEXT_OVERLAY_TEXT, textOverlayText)
+//        bundle.putInt(TEXT_OVERLAY_TEXT_COLOR, textOverlayTextColor)
+//        bundle.putFloat(TEXT_OVERLAY_ALPHA, textOverlayAlpha)
         bundle.putInt(KEY_TRANSITION_VIDEO, videoTransitionSelections)
         transformerIntent.putExtras(bundle)
-        val intentUri = if (intent.data != null) {
-            intent.data
-        } else if (localFileUriList != null) {
-            null
-        } else {
-            Uri.parse(PRESET_FILE_URIS[inputUriPosition])
-        }
-        transformerIntent.setData(intentUri)
-
+//        val intentUri = if (intent.data != null) {
+//            intent.data
+//        } else if (localFileUriList != null) {
+//            null
+//        } else {
+//            Uri.parse(PRESET_FILE_URIS[inputUriPosition])
+//        }
+//        transformerIntent.setData(intentUri)
         startActivity(transformerIntent)
     }
 

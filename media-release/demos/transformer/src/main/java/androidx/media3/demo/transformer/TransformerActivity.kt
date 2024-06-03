@@ -320,10 +320,10 @@ class TransformerActivity : AppCompatActivity() {
             if (videoMimeType != null) {
                 transformerBuilder.setVideoMimeType(videoMimeType)
             }
-
+            val fataBack = bundle.getBoolean(ConfigurationActivity.ENABLE_FALLBACK, false)
             transformerBuilder.setEncoderFactory(
                 DefaultEncoderFactory.Builder(this.applicationContext)
-                    .setEnableFallback(bundle.getBoolean(ConfigurationActivity.ENABLE_FALLBACK))
+                    .setEnableFallback(fataBack)
                     .build()
             )
 
@@ -459,10 +459,13 @@ class TransformerActivity : AppCompatActivity() {
                                                 TimeUnit.SECONDS
                                             )
                                         )
-                                        mainHandler.postDelayed( /* r= */this,  /* delayMillis= */500)
+                                        mainHandler.postDelayed( /* r= */this,  /* delayMillis= */
+                                            500
+                                        )
                                     }
                                 }
-                            }, 500)
+                            }, 500
+                        )
                     }
                 }
             }
@@ -822,9 +825,16 @@ class TransformerActivity : AppCompatActivity() {
                                 prevUri = uri
                                 return@forEach //continue
                             }
-                            val bitmap = mapToBitmapMap[uri]?.let { fitBitmap(it, maxWidth, maxHeight) }
+                            val bitmap =
+                                mapToBitmapMap[uri]?.let { fitBitmap(it, maxWidth, maxHeight) }
                             val effect = ImmutableList.Builder<Effect>()
-                            effect.add(Presentation.createForWidthAndHeight(maxWidth, maxHeight, Presentation.LAYOUT_SCALE_TO_FIT))
+                            effect.add(
+                                Presentation.createForWidthAndHeight(
+                                    maxWidth,
+                                    maxHeight,
+                                    Presentation.LAYOUT_SCALE_TO_FIT
+                                )
+                            )
                             if (bitmap != null) {
 //                                effect?.add(matrixTransformationFactory.createSlideFadeTransition())
                                 effect.add(
@@ -996,7 +1006,7 @@ class TransformerActivity : AppCompatActivity() {
         outputPlayerView!!.visibility = View.VISIBLE
         outputVideoTextView!!.visibility = View.VISIBLE
         debugTextView!!.visibility = View.VISIBLE
-        displayInputButton!!.visibility = View.VISIBLE
+//        displayInputButton!!.visibility = View.VISIBLE
         Log.d(TAG, DebugTraceUtil.generateTraceSummary())
         val file = File(getExternalFilesDir(null), "trace.tsv")
         try {
