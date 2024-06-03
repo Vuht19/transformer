@@ -64,7 +64,6 @@ import androidx.media3.demo.transformer.merge_image.FadeOverlay
 import androidx.media3.demo.transformer.merge_image.MatrixTransformationFactory
 import androidx.media3.demo.transformer.merge_image.SlideFadeOverlay
 import androidx.media3.demo.transformer.merge_image.fitBitmap
-import androidx.media3.demo.transformer.merge_image.mapToBitmapAutoResized
 import androidx.media3.demo.transformer.merge_image.mapToBitmapDictionary
 import androidx.media3.effect.BitmapOverlay
 import androidx.media3.effect.Contrast
@@ -775,12 +774,18 @@ class TransformerActivity : AppCompatActivity() {
                         android.util.Log.d(TAG, "createVideoTransitionFromBundle: $throwable")
                     }) {
                         val editedMediaList: LinkedList<EditedMediaItem> = LinkedList()
-                        val mapToBitmapMap = uriList.mapToBitmapAutoResized(contentResolver)
+                        val mapToBitmapMap = uriList.mapToBitmapDictionary(contentResolver)
 
-                        mapToBitmapMap.forEach { (uri, bitmap) ->
-                            var effect: ImmutableList.Builder<Effect>? = null
+
+                        uriList.forEach { uri ->
+                            val bitmap = mapToBitmapMap[uri]?.let { fitBitmap(it, 1280, 720) }
+                            var effect = ImmutableList.Builder<Effect>()
+                            effect.add(Presentation.createForWidthAndHeight(
+                                1280,
+                                720,
+                                Presentation.LAYOUT_SCALE_TO_FIT
+                            ))
                             if (bitmap != null) {
-                                effect = ImmutableList.Builder<Effect>()
                                 effect.add(
                                     if (transitionVideo == TRANSITION_SLIDE_LEFT) matrixTransformationFactory.createSlideLeftTransition()
                                     else matrixTransformationFactory.createSlideRightTransition()
@@ -811,11 +816,11 @@ class TransformerActivity : AppCompatActivity() {
                     lifecycleScope.launch(Dispatchers.IO + CoroutineExceptionHandler { _, throwable ->
                         android.util.Log.d(TAG, "createVideoTransitionFromBundle: $throwable")
                     }) {
-                        var maxHeight = 0
-                        var maxWidth = 0
+//                        var maxHeight = 0
+//                        var maxWidth = 0
                         val mapToBitmapMap = uriList.mapToBitmapDictionary(contentResolver) {
-                            if (it.width > maxWidth) maxWidth = it.width
-                            if (it.height > maxHeight) maxHeight = it.height
+//                            if (it.width > maxWidth) maxWidth = it.width
+//                            if (it.height > maxHeight) maxHeight = it.height
                         }
                         val editedMediaList: LinkedList<EditedMediaItem> = LinkedList()
                         var prevBitmap: Bitmap? = null
@@ -826,12 +831,12 @@ class TransformerActivity : AppCompatActivity() {
                                 return@forEach //continue
                             }
                             val bitmap =
-                                mapToBitmapMap[uri]?.let { fitBitmap(it, maxWidth, maxHeight) }
+                                mapToBitmapMap[uri]?.let { fitBitmap(it, 1280, 720) }
                             val effect = ImmutableList.Builder<Effect>()
                             effect.add(
                                 Presentation.createForWidthAndHeight(
-                                    maxWidth,
-                                    maxHeight,
+                                    1280,
+                                    720,
                                     Presentation.LAYOUT_SCALE_TO_FIT
                                 )
                             )
@@ -878,7 +883,7 @@ class TransformerActivity : AppCompatActivity() {
     ): EditedMediaItem {
         return EditedMediaItem.Builder(createMediaItem(bundle, uri)).apply {
             // For image inputs. Automatically ignored if input is audio/video.
-            setDurationUs(presentationOneTimeUs).setFrameRate(20)
+            setDurationUs(presentationOneTimeUs).setFrameRate(30)
             if (bundle != null) {
                 val audioProcessors = createAudioProcessorsFromBundle(bundle)
                 this.setRemoveAudio(true)
