@@ -24,17 +24,13 @@ class FadeOverlay(private val bitmap: Bitmap, private val presentationOneTimeUs:
 
     override fun getOverlaySettings(presentationTimeUs: Long): OverlaySettings {
 
-        val displayTimeOfImage = if (presentationTimeUs > presentationOneTimeUs) {
-            val coefficient = (presentationTimeUs / presentationOneTimeUs).toInt()
-            (presentationTimeUs - (presentationOneTimeUs * coefficient)) / presentationOneTimeUs
-        } else {
-            presentationTimeUs / presentationOneTimeUs
-        }
-        val TIME_SHOW = 0.4f
+        val coefficient = (presentationTimeUs / presentationOneTimeUs).toInt()
+        val displayTimeOfImage = (presentationTimeUs - (presentationOneTimeUs * coefficient)) / presentationOneTimeUs
+        val TIME_SHOW_STATIC = 0.7f
         var alpha: Float
         val translate: Float = 1f.coerceAtMost(displayTimeOfImage)
-        if (translate > TIME_SHOW) {
-            alpha = (translate - TIME_SHOW) / (1 - TIME_SHOW)
+        if (translate > TIME_SHOW_STATIC) {
+            alpha = (translate - TIME_SHOW_STATIC) / (1 - TIME_SHOW_STATIC)
             if (alpha <= 0) {
                 alpha = 0f
             } else if (alpha > 1f) {
