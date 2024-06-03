@@ -88,15 +88,13 @@ internal class MatrixTransformationFactory(
 
     private fun slideLeftTransitionMatrix(presentationTimeUs: Long): Matrix {
         val transformationMatrix = Matrix()
-        val percentageDisplayTimeOfImage = if (presentationTimeUs > presentationOneTimeUs) {
-            (presentationTimeUs % presentationOneTimeUs) / presentationOneTimeUs
-        } else {
-            presentationTimeUs / presentationOneTimeUs
-        }
+        val percentageDisplayTimeOfImage = (presentationTimeUs % presentationOneTimeUs) / presentationOneTimeUs
+        val TIME_SHOW_STATIC = 1 - percentTransitionTime
         val translate: Float = 1f.coerceAtMost(percentageDisplayTimeOfImage)
-        if (translate > (1 - percentTransitionTime)) {
-            transformationMatrix.postTranslate(-translate, 0f)
-            transformationMatrix.preTranslate(-translate, 0f)
+        if (translate > TIME_SHOW_STATIC) {
+            val pos = (translate - TIME_SHOW_STATIC) / (0.95f - TIME_SHOW_STATIC)
+            transformationMatrix.postTranslate(-pos, 0f)
+            transformationMatrix.preTranslate(-pos, 0f)
         }
         return transformationMatrix
     }
@@ -114,15 +112,13 @@ internal class MatrixTransformationFactory(
 
     private fun slideRightTransitionMatrix(presentationTimeUs: Long): Matrix {
         val transformationMatrix = Matrix()
-        val percentageDisplayTimeOfImage = if (presentationTimeUs > presentationOneTimeUs) {
-            (presentationTimeUs % presentationOneTimeUs) / presentationOneTimeUs
-        } else {
-            presentationTimeUs / presentationOneTimeUs
-        }
+        val percentageDisplayTimeOfImage = (presentationTimeUs % presentationOneTimeUs) / presentationOneTimeUs
+        val TIME_SHOW_STATIC = 1 - percentTransitionTime
         val translate: Float = 1f.coerceAtMost(percentageDisplayTimeOfImage)
-        if (translate > (1 - percentTransitionTime)) {
-            transformationMatrix.postTranslate(translate, 0f)
-            transformationMatrix.preTranslate(translate, 0f)
+        if (translate > TIME_SHOW_STATIC) {
+            val pos = (translate - TIME_SHOW_STATIC) / (0.95f - TIME_SHOW_STATIC)
+            transformationMatrix.postTranslate(pos, 0f)
+            transformationMatrix.preTranslate(pos, 0f)
         }
         return transformationMatrix
     }
