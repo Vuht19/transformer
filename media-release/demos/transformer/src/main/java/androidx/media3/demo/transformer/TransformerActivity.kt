@@ -811,7 +811,6 @@ class TransformerActivity : AppCompatActivity() {
                             var effect: ImmutableList.Builder<Effect>? = null
                             if (bitmap != null) {
                                 effect = ImmutableList.Builder<Effect>()
-                                effect?.add(matrixTransformationFactory.createSlideFadeTransition())
                                 effect?.add(
                                     FadeOverlay.toOverlayEffect(
                                         bitmap,
