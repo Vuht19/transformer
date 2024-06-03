@@ -27,6 +27,7 @@
     android:layout_marginStart="8dp"
     android:text="@string/select_preset_file_title"
     android:textSize="12sp"
+    android:visibility="gone"
     app:layout_constraintEnd_toStartOf="@id/select_audio_file"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@+id/configuration_text_view" />
