@@ -51,7 +51,6 @@ import com.google.android.material.slider.Slider
 import com.google.common.collect.ImmutableMap
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull
 import org.checkerframework.checker.nullness.qual.RequiresNonNull
-import java.util.Arrays
 import kotlin.math.sqrt
 
 /**
@@ -1062,6 +1061,12 @@ class ConfigurationActivity : AppCompatActivity() {
         private val HALF_DIAGONAL = 1f / sqrt(2.0).toFloat()
 
         var localFileUriList: MutableList<Uri>? = ArrayList()
+            get() {
+                if (field == null) {
+                    field = ArrayList()
+                }
+                return field
+            }
         var selectedAudioUri: Uri? = null
     }
 }
