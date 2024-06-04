@@ -108,26 +108,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Long click to multiselect"
-        android:textSize="14sp"
         android:textColor="?colorPrimary"
+        android:textSize="14sp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/select_local_file_button" />
 
-    <TextView
-        android:id="@+id/selected_file_text_view"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_items"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginHorizontal="32dp"
         android:layout_marginVertical="12dp"
         android:gravity="center"
         android:paddingLeft="24dp"
         android:paddingRight="24dp"
-        android:textSize="12sp"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:layout_constraintBottom_toTopOf="@id/clear_data_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/note" />
+        app:layout_constraintTop_toBottomOf="@id/note"
+        app:spanCount="4" />
 
     <TextView
         android:id="@+id/configuration_text_view"
@@ -150,7 +151,7 @@
         app:layout_constraintBottom_toTopOf="@+id/select_audio_effects_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/selected_file_text_view">
+        app:layout_constraintTop_toBottomOf="@+id/select_local_file_button">
 
         <TableLayout
             android:layout_width="match_parent"

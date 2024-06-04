@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="stl_SmartTabLayout">
+        <attr name="stl_indicatorAlwaysInCenter" format="boolean" />
+        <attr name="stl_indicatorWithoutPadding" format="boolean" />
+        <attr name="stl_indicatorInFront" format="boolean" />
+        <attr name="stl_indicatorInterpolation" format="enum">
+            <enum name="smart" value="0" />
+            <enum name="linear" value="1" />
+        </attr>
+        <attr name="stl_indicatorGravity" format="enum">
+            <enum name="bottom" value="0" />
+            <enum name="top" value="1" />
+            <enum name="center" value="2" />
+        </attr>
+        <attr name="stl_indicatorColor" format="color" />
+        <attr name="stl_indicatorColors" format="reference" />
+        <attr name="stl_indicatorThickness" format="dimension" />
+        <attr name="stl_indicatorWidth" format="dimension">
+            <enum name="auto" value="-1" />
+        </attr>
+        <attr name="stl_indicatorCornerRadius" format="dimension" />
+        <attr name="stl_overlineColor" format="color" />
+        <attr name="stl_overlineThickness" format="dimension" />
+        <attr name="stl_underlineColor" format="color" />
+        <attr name="stl_underlineThickness" format="dimension" />
+        <attr name="stl_dividerColor" format="color" />
+        <attr name="stl_dividerColors" format="reference" />
+        <attr name="stl_dividerThickness" format="dimension" />
+        <attr name="stl_defaultTabBackground" format="reference" />
+        <attr name="stl_defaultTabTextAllCaps" format="boolean" />
+        <attr name="stl_defaultTabTextColor" format="color|reference" />
+        <attr name="stl_defaultTabSelectedTextColor" format="color|reference" />
+        <attr name="stl_defaultTabTextSize" format="dimension" />
+        <attr name="stl_defaultTabTextHorizontalPadding" format="dimension" />
+        <attr name="stl_defaultTabTextMinWidth" format="dimension" />
+        <attr name="stl_customTabTextLayoutId" format="reference" />
+        <attr name="stl_customTabTextViewId" format="reference" />
+        <attr name="stl_distributeEvenly" format="boolean" />
+        <attr name="stl_clickable" format="boolean" />
+        <attr name="stl_titleOffset" format="dimension">
+            <enum name="auto_center" value="-1" />
+        </attr>
+        <attr name="stl_drawDecorationAfterTab" format="boolean" />
+    </declare-styleable>
+
+
+    <!-- Declare custom attributes for Alphabetik -->
+    <declare-styleable name="Alphabetik">
+        <!-- Size -->
+        <attr name="width" format="dimension" />
+        <attr name="fontSize" format="dimension" />
+        <!--attr name="selectedFontSize" format="dimension" /-->
+        <!-- Colors -->
+        <attr name="itemsColor" format="reference" />
+        <!--attr name="selectedItemColor" format="reference" /-->
+        <!--attr name="selectedItemBackground" format="reference" /-->
+    </declare-styleable>
+
+    <attr name="customSelectedColor" format="color" />
+    <attr name="customUnselectedColor" format="color" />
+
+    <attr name="slidePic" format="integer" />
+    <attr name="selectColor" format="color" />
+    <attr name="unSelectColor" format="color" />
+<declare-styleable name="CustomCheckedView">
+    <attr name="customCheckedColor" format="color|integer" />
+    <attr name="customUncheckedColor" format="color|integer" />
+    <attr name="customText" format="string" />
+    <attr name="customSrc" format="integer|reference" />
+</declare-styleable>
+
+
+    <!-- cac thuoc tinh chung cho cac theme -->
+    <attr name="home_accent_color" format="reference|color" />
+
+    <attr name="ctx_menu_text_color" format="color" />
+    <attr name="ctx_menu_icon_color" format="color|reference" />
+    <attr name="ctx_menu_bg_color" format="color|reference" />
+    <attr name="ctx_menu_click_style" format="reference" />
+
+    <attr name="sort_menu_text_color" format="color" />
+    <attr name="sort_menu_button_normal_color" format="color" />
+    <attr name="sort_menu_button_active_color" format="color|reference" />
+    <attr name="sort_menu_bg_color" format="color|reference" />
+    <attr name="sort_menu_click_style" format="reference" />
+
+    <attr name="toolbar_bg_color" format="color|reference" />
+    <attr name="toolbar_back_icon" format="reference" />
+    <attr name="toolbar_title_color" format="color" />
+    <attr name="toolbar_button_color" format="color" />
+    <attr name="toolbar_button_click" format="reference" />
+
+    <attr name="home_bottom_player_bg_color" format="color" />
+    <attr name="native_ads_bg" format="color" />
+    <attr name="devide_line_bg" format="color" />
+
+    <attr name="home_settings_icon_color" format="color|reference" />
+
+    <attr name="home_text_main_color" format="color" />
+    <attr name="home_text_second_color" format="color" />
+    <attr name="home_button_color" format="color" />
+    <attr name="home_icon_color" format="reference" />
+    <attr name="home_tab_unselect_color" format="color" />
+    <attr name="home_tab_select_color" format="reference" />
+    <attr name="home_tab_line_unselect_color" format="color" />
+    <attr name="home_search_underline_color" format="color" />
+    <attr name="home_search_text_color" format="color" />
+    <attr name="home_style_highlight" format="reference" />
+    <attr name="home_switch_normal_color" format="color|reference" />
+    <attr name="home_sys_playlist_bg" format="reference" />
+    <attr name="eq_band_select_color" format="color" />
+    <attr name="eq_band_unselect_color" format="color" />
+    <attr name="eq_preset_combo_bg" format="reference" />
+    <attr name="eq_analog_unselect_line" format="color" />
+    <attr name="eq_switch_thumb" format="reference" />
+    <attr name="eq_switch_track" format="reference" />
+    <attr name="eq_bg_preset_item" format="reference" />
+    <attr name="ad_action_border" format="reference" />
+
+    <attr name="remove_ads_bt_border" format="reference" />
+    <attr name="bottom_progress_bg_color" format="color|reference" />
+    <attr name="menu_avatar_type_radio_normal_color" format="color|reference" />
+    <attr name="edit_cover_bt_bg" format="reference" />
+
+
+    <declare-styleable name="IndexFastScrollRecyclerView">
+        <attr name="setIndexTextSize" format="integer" />
+        <attr name="setIndexbarWidth" format="float" />
+        <attr name="setIndexbarMargin" format="float" />
+        <attr name="setPreviewPadding" format="integer" />
+        <attr name="setPreviewTextSize" format="integer" />
+        <attr name="setPreviewColor" format="color|string" />
+        <attr name="setPreviewTextColor" format="color|string" />
+        <attr name="setPreviewTransparentValue" format="float" />
+        <attr name="setIndexBarCornerRadius" format="integer" />
+        <attr name="setIndexBarTransparentValue" format="float" />
+        <attr name="setIndexBarShown" format="boolean" />
+        <attr name="setIndexBarColor" format="color|string" />
+        <attr name="setIndexBarTextColor" format="color|string" />
+        <attr name="setIndexBarHighlightTextColor" format="color|string" />
+        <attr name="setIndexBarStrokeWidth" format="integer" />
+        <attr name="setIndexBarStrokeColor" format="color|string" />
+    </declare-styleable>
+    <declare-styleable name="ItemSettingView">
+        <attr name="checkable" format="boolean"/>
+        <attr name="title" format="string"/>
+        <attr name="subtitle" format="string"/>
+        <attr name="drawable" format="reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="FloatSeekBar">
+        <attr name="floatMax" format="float" />
+        <attr name="floatMin" format="float" />
+    </declare-styleable>
+
+    <declare-styleable name="SquareImageView">
+        <attr name="mode" format="integer">
+            <enum name="square_by_width" value="0" />
+            <enum name="square_by_height" value="1" />
+            <enum name="square_by_xy" value="2" />
+        </attr>
+    </declare-styleable>
+    <declare-styleable name="RatioFrameLayout">
+        <attr name="ratioBy" format="integer">
+            <enum name="auto" value="0" />
+            <enum name="width" value="1" />
+            <enum name="height" value="2" />
+        </attr>
+        <attr name="ratio" format="float" />
+    </declare-styleable>
+    <declare-styleable name="MenuItem">
+        <attr name="menuIcon" format="integer" />
+        <attr name="menuName" format="string" />
+        <attr name="showCheckbox" format="boolean" />
+    </declare-styleable>
+    <declare-styleable name="EmptyAdView">
+        <attr name="emptyText" format="string|reference" />
+        <attr name="emptyTextColor" format="color" />
+        <attr name="hideEmptyText" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="cs_CircularSeekBar">
+        <attr name="cs_circle_style">
+            <enum name="butt" value="0" />
+            <enum name="round" value="1" />
+            <enum name="square" value="2" />
+        </attr>
+        <attr name="cs_progress" format="integer"/>
+        <attr name="cs_max" format="integer"/>
+        <attr name="cs_negative_enabled" format="boolean"/>
+        <attr name="cs_move_outside_circle" format="boolean"/>
+        <attr name="cs_maintain_equal_circle" format="boolean"/>
+        <attr name="cs_use_custom_radii" format="boolean"/>
+        <attr name="cs_lock_enabled" format="boolean"/>
+        <attr name="cs_circle_x_radius" format="dimension" />
+        <attr name="cs_circle_y_radius" format="dimension" />
+        <attr name="cs_circle_stroke_width" format="dimension" />
+        <attr name="cs_disable_pointer" format="boolean"/>
+        <attr name="cs_pointer_stroke_width" format="dimension" />
+        <attr name="cs_pointer_halo_width" format="dimension" />
+        <attr name="cs_pointer_halo_border_width" format="dimension"/>
+        <attr name="cs_circle_fill" format="color"/>
+        <attr name="cs_circle_color" format="color"/>
+        <attr name="cs_circle_progress_color" format="color"/>
+        <attr name="cs_pointer_color" format="color"/>
+        <attr name="cs_pointer_halo_color" format="color"/>
+        <attr name="cs_pointer_halo_color_ontouch" format="color"/>
+        <attr name="cs_pointer_alpha_ontouch" format="integer"/>
+        <attr name="cs_pointer_angle" format="float"/>
+        <attr name="cs_start_angle" format="float"/>
+        <attr name="cs_end_angle" format="float"/>
+        <attr name="cs_disable_progress_glow" format="boolean"/>
+        <attr name="cs_hide_progress_when_empty" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="ItemSongWidget">
+        <attr name="item_song_widget_position" format="string"/>
+        <attr name="item_song_widget_song_name" format="string"/>
+        <attr name="item_song_widget_artist_name" format="string"/>
+    </declare-styleable>
+</resources>
