@@ -401,7 +401,6 @@ class TransformerActivity : AppCompatActivity() {
                             EditedMediaItemSequence(editedMediaItemList),
                         )
                     }
-                    compositionBuilder
 //                        .setHdrMode(bundle.getInt(ConfigurationActivity.HDR_MODE))
                     /*.experimentalSetForceAudioTrack(
                         bundle.getBoolean(ConfigurationActivity.FORCE_AUDIO_TRACK)
@@ -515,7 +514,7 @@ class TransformerActivity : AppCompatActivity() {
         MatrixTransformationFactory(durationSeconds)
     }
 
-    private fun createEditedMediaItemList(
+    private suspend fun createEditedMediaItemList(
         bundle: Bundle,
         uriList: List<Uri>?,
         callback: (List<EditedMediaItem>) -> Unit,
@@ -524,7 +523,7 @@ class TransformerActivity : AppCompatActivity() {
         var editedMediaItems: List<EditedMediaItem>
         val transitionVideo = bundle.getInt(Constants.KEY_TRANSITION_VIDEO, -1)
         val height = bundle.getInt(ConfigurationActivity.RESOLUTION_HEIGHT, -1)
-        if (transitionVideo > -1) {
+        if (transitionVideo > 0) {
             val presentationOneTimeUs_Float = presentationOneTimeUs.toFloat()
             when (transitionVideo) {
                 TRANSITION_ZOOM_IN -> {
@@ -660,8 +659,12 @@ class TransformerActivity : AppCompatActivity() {
                 }
             }
         } else {
-            editedMediaItems = uriList.map { createEditedMediaItem(bundle, it, null) }
-            callback.invoke(editedMediaItems)
+            editedMediaItems = uriList.map {
+                createEditedMediaItem(bundle, it, null)
+            }
+            withContext(Dispatchers.Main) {
+                callback.invoke(editedMediaItems)
+            }
         }
     }
 

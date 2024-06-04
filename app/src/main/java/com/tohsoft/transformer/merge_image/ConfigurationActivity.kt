@@ -587,7 +587,7 @@ class ConfigurationActivity : AppCompatActivity() {
         AlertDialog.Builder( /* context= */this)
             .setTitle("Add Transition")
             .setSingleChoiceItems(
-                Constants.VIDEO_TRANSITION, 0
+                Constants.VIDEO_TRANSITION, videoTransitionSelections
             ) { dialog, which ->
                 videoTransitionSelections = which
             }
