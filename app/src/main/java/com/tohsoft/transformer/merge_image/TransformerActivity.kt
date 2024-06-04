@@ -372,7 +372,6 @@ class TransformerActivity : AppCompatActivity() {
                             EditedMediaItemSequence(editedMediaItemList),
                         )
                     }
-                    compositionBuilder
 //                        .setHdrMode(bundle.getInt(ConfigurationActivity.HDR_MODE))
                     /*.experimentalSetForceAudioTrack(
                         bundle.getBoolean(ConfigurationActivity.FORCE_AUDIO_TRACK)
@@ -499,7 +498,7 @@ class TransformerActivity : AppCompatActivity() {
         effectHelper.genRandomEffects(uriList, contentResolver).let {
             callback(it)
         }
-        /*  if (transitionVideo > -1) {
+        /*  if (transitionVideo > 0) {
               val presentationOneTimeUs_Float = presentationOneTimeUs.toFloat()
               when (transitionVideo) {
                   TRANSITION_ZOOM_IN -> {

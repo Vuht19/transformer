@@ -45,11 +45,13 @@ import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.Assertions
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.transformer.Composition
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.slider.RangeSlider
 import com.google.android.material.slider.Slider
 import com.google.common.collect.ImmutableMap
 import com.tohsoft.transformer.R
 import com.tohsoft.transformer.merge_image.Constants.KEY_TRANSITION_VIDEO
+import com.tohsoft.transformer.merge_image.adapter.PhotoAdapter
 import kotlin.math.sqrt
 
 /**
@@ -67,7 +69,6 @@ class ConfigurationActivity : AppCompatActivity() {
         null
     private var selectPresetFileButton: Button? = null
     private var selectLocalFileButton: Button? = null
-    private var selectedFileTextView: TextView? = null
     private var removeAudioCheckbox: CheckBox? = null
     private var removeVideoCheckbox: CheckBox? = null
     private var flattenForSlowMotionCheckbox: CheckBox? = null
@@ -108,12 +109,13 @@ class ConfigurationActivity : AppCompatActivity() {
     private var textOverlayText: String? = null
     private var textOverlayTextColor = 0
     private var textOverlayAlpha = 0f
+    private val mPhotoAdapter by lazy { PhotoAdapter() }
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.configuration_activity)
-
+        findViewById<RecyclerView>(R.id.rv_items).adapter = mPhotoAdapter
         findViewById<View>(R.id.export_button).setOnClickListener { view: View ->
             this.startExport(
                 view
@@ -159,7 +161,7 @@ class ConfigurationActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.clear_data_button).setOnClickListener {
-            selectedFileTextView?.text = ""
+            mPhotoAdapter.clearAll()
             localFileUriList = null
             selectedAudioUri = null
         }
@@ -170,14 +172,10 @@ class ConfigurationActivity : AppCompatActivity() {
             videoLocalFilePickerLauncher?.let {
                 selectLocalFile(
                     it,  /* mimeTypes= */
-                    arrayOf("image/png","image/jpeg","image/webp")
+                    arrayOf("image/png", "image/jpeg", "image/webp")
                 )
             }
         }
-
-        selectedFileTextView =
-            findViewById<TextView?>(R.id.selected_file_text_view)
-        selectedFileTextView!!.setText(PRESET_FILE_URI_DESCRIPTIONS[inputUriPosition])
 
         removeAudioCheckbox = findViewById<CheckBox?>(R.id.remove_audio_checkbox)
         removeAudioCheckbox!!.setOnClickListener(View.OnClickListener { view: View ->
@@ -327,9 +325,6 @@ class ConfigurationActivity : AppCompatActivity() {
             Assertions.checkNotNull<Button?>(
                 selectLocalFileButton
             ).isEnabled = false
-            Assertions.checkNotNull<TextView?>(
-                selectedFileTextView
-            ).text = intentUri.toString()
         }
     }
 
@@ -441,7 +436,6 @@ class ConfigurationActivity : AppCompatActivity() {
     private fun selectPresetFileInDialog(dialog: DialogInterface, which: Int) {
         inputUriPosition = which
         localFileUriList = null
-        selectedFileTextView!!.text = PRESET_FILE_URI_DESCRIPTIONS[inputUriPosition]
     }
 
     private fun selectLocalFile(
@@ -524,7 +518,7 @@ class ConfigurationActivity : AppCompatActivity() {
 
                 localFileUriList!!.addAll(unsorted)
             }
-            selectedFileTextView!!.text = localFileUriList.toString()
+            localFileUriList?.let { mPhotoAdapter.setData(it) }
         } else {
             Toast.makeText(
                 applicationContext,
@@ -587,7 +581,7 @@ class ConfigurationActivity : AppCompatActivity() {
         AlertDialog.Builder( /* context= */this)
             .setTitle("Add Transition")
             .setSingleChoiceItems(
-                Constants.VIDEO_TRANSITION, 0
+                Constants.VIDEO_TRANSITION, videoTransitionSelections
             ) { dialog, which ->
                 videoTransitionSelections = which
             }
