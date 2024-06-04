@@ -15,6 +15,7 @@ object Constants {
     const val TRANSITION_SLIDE_LEFT = 3
     const val TRANSITION_SLIDE_RIGHT = 4
     const val TRANSITION_FADE = 5
+    const val RANDOM = 6
     const val KEY_TRANSITION_VIDEO = "KEY_TRANSITION_VIDEO"
 
     val VIDEO_TRANSITION = arrayOf(
@@ -24,6 +25,7 @@ object Constants {
         "Slide Left",
         "Slide Right",
         "Fade",
+        "Random",
     )
 }
 

@@ -54,13 +54,13 @@ class EffectMapper(duration: Long, var size: Size = defaultSize) {
                     map[uri] = it
                 }
             }
-            val type = types[random.nextInt(2)]
+            val type = types[random.nextInt(6)]
             effects.add(genEffect(type, currentUri, nextUri, map))
         }
         return effects
     }
 
-    fun genEffect(type: EffectType, list: Collection<Uri>, contentResolver: ContentResolver): List<EditedMediaItem> {
+    fun genEffects(type: EffectType, list: Collection<Uri>, contentResolver: ContentResolver): List<EditedMediaItem> {
         val map = HashMap<Uri, Bitmap>()
         var currentUri: Uri? = null
         var nextUri: Uri? = null

@@ -491,152 +491,27 @@ class TransformerActivity : AppCompatActivity() {
         callback: (List<EditedMediaItem>) -> Unit,
     ) {
         if (uriList == null) return
-        var editedMediaItems: List<EditedMediaItem>
         val transitionVideo = bundle.getInt(Constants.KEY_TRANSITION_VIDEO, -1)
-        val height = bundle.getInt(ConfigurationActivity.RESOLUTION_HEIGHT, -1)
         val effectHelper = EffectMapper(presentationOneTimeUs)
-        effectHelper.genRandomEffects(uriList, contentResolver).let {
-            callback(it)
+        if (transitionVideo == Constants.RANDOM) {
+            effectHelper.genRandomEffects(uriList, contentResolver).let {
+                callback(it)
+            }
+        } else {
+            val type = when (transitionVideo) {
+                Constants.TRANSITION_ZOOM_IN -> EffectType.ZOOM_IN
+                Constants.TRANSITION_ROTATE -> EffectType.ROTATE
+                Constants.TRANSITION_SLIDE_LEFT -> EffectType.SLIDE_LEFT
+                Constants.TRANSITION_SLIDE_RIGHT -> EffectType.SLIDE_RIGHT
+                Constants.TRANSITION_FADE -> EffectType.FADE
+                else -> {
+                    EffectType.NONE
+                }
+            }
+            effectHelper.genEffects(type, uriList, contentResolver).let {
+                callback(it)
+            }
         }
-        /*  if (transitionVideo > 0) {
-              val presentationOneTimeUs_Float = presentationOneTimeUs.toFloat()
-              when (transitionVideo) {
-                  TRANSITION_ZOOM_IN -> {
-                      val effect = ImmutableList.Builder<Effect>()
-                      effect.add(matrixTransformationFactory.createZoomInTransition())
-                      editedMediaItems = uriList.map {
-                          createEditedMediaItem(
-                              bundle,
-                              it,
-                              effect
-                          )
-                      }
-                      callback.invoke(editedMediaItems)
-                  }
-
-                  TRANSITION_ROTATE -> {
-                      val effect = ImmutableList.Builder<Effect>()
-                      effect.add(matrixTransformationFactory.createRotateTransition())
-                      editedMediaItems = uriList.map {
-                          createEditedMediaItem(
-                              bundle,
-                              it,
-                              effect
-                          )
-                      }
-                      callback.invoke(editedMediaItems)
-                  }
-
-                  TRANSITION_SLIDE_LEFT, TRANSITION_SLIDE_RIGHT -> {
-                      lifecycleScope.launch(Dispatchers.IO + CoroutineExceptionHandler { coroutineContext, throwable ->
-                          android.util.Log.d(TAG, "createVideoTransitionFromBundle: $throwable")
-                      }) {
-                          val editedMediaList: LinkedList<EditedMediaItem> = LinkedList()
-                          val mapToBitmapMap = uriList.mapToBitmapDictionary(contentResolver)
-
-
-                          uriList.forEachIndexed { index, uri ->
-                              val bitmap = mapToBitmapMap[uri]?.let { fitBitmap(it, 1280, 720) }
-                              val effect = ImmutableList.Builder<Effect>()
-                              if (index < uriList.size - 1) {
-                                  android.util.Log.d(TAG, "createEditedMediaItemList: $index ${uriList.size}")
-                                  effect.add(
-                                      Presentation.createForWidthAndHeight(
-                                          1280,
-                                          720,
-                                          Presentation.LAYOUT_SCALE_TO_FIT
-                                      )
-                                  )
-                                  if (bitmap != null) {
-                                      effect.add(
-                                          if (transitionVideo == TRANSITION_SLIDE_LEFT) matrixTransformationFactory.createSlideLeftTransition()
-                                          else matrixTransformationFactory.createSlideRightTransition()
-                                      )
-                                      effect.add(
-                                          SlideFadeOverlay.toOverlayEffect(
-                                              bitmap,
-                                              presentationOneTimeUs_Float
-                                          )
-                                      )
-                                  }
-                              }
-                              editedMediaList.add(
-                                  createEditedMediaItem(
-                                      bundle,
-                                      uri,
-                                      effect
-                                  )
-                              )
-                          }
-                          editedMediaItems = editedMediaList.toList()
-                          withContext(Dispatchers.Main) {
-                              callback.invoke(editedMediaItems)
-                          }
-                      }
-                  }
-
-                  TRANSITION_FADE -> {
-                      lifecycleScope.launch(Dispatchers.IO + CoroutineExceptionHandler { _, throwable ->
-                          android.util.Log.d(TAG, "createVideoTransitionFromBundle: $throwable")
-                      }) {
-  //                        var maxHeight = 0
-  //                        var maxWidth = 0
-                          val mapToBitmapMap = uriList.mapToBitmapDictionary(contentResolver) {
-  //                            if (it.width > maxWidth) maxWidth = it.width
-  //                            if (it.height > maxHeight) maxHeight = it.height
-                          }
-                          val editedMediaList: LinkedList<EditedMediaItem> = LinkedList()
-                          var prevBitmap: Bitmap? = null
-                          var prevUri: Uri? = null
-                          uriList.forEach { uri ->
-                              if (prevUri == null) {
-                                  prevUri = uri
-                                  return@forEach //continue
-                              }
-                              val bitmap =
-                                  mapToBitmapMap[uri]?.let { fitBitmap(it, 1280, 720) }
-                              val effect = ImmutableList.Builder<Effect>()
-                              effect.add(
-                                  Presentation.createForWidthAndHeight(
-                                      1280,
-                                      720,
-                                      Presentation.LAYOUT_SCALE_TO_FIT
-                                  )
-                              )
-                              if (bitmap != null) {
-  //                                effect?.add(matrixTransformationFactory.createSlideFadeTransition())
-                                  effect.add(
-                                      FadeOverlay.toOverlayEffect(
-                                          bitmap,
-                                          presentationOneTimeUs_Float
-                                      )
-                                  )
-                              }
-                              editedMediaList.add(
-                                  createEditedMediaItem(
-                                      bundle,
-                                      prevUri!!,
-                                      effect
-                                  )
-                              )
-                              prevUri = uri
-                          }
-                          prevUri?.let {
-                              editedMediaList.add(
-                                  createEditedMediaItem(bundle, prevUri!!)
-                              )
-                          }
-                          editedMediaItems = editedMediaList
-                          withContext(Dispatchers.Main) {
-                              callback.invoke(editedMediaItems)
-                          }
-                      }
-                  }
-              }
-          } else {
-              editedMediaItems = uriList.map { createEditedMediaItem(bundle, it, null) }
-              callback.invoke(editedMediaItems)
-          }*/
     }
 
     private fun createEditedMediaItem(

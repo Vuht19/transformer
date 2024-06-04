@@ -88,7 +88,7 @@ class ConfigurationActivity : AppCompatActivity() {
     private var selectVideoEffectsButton: Button? = null
     private var audioEffectsSelections: BooleanArray? = null
     private var videoEffectsSelections: BooleanArray? = null
-    private var videoTransitionSelections: Int = -1
+    private var videoTransitionSelections: Int = Constants.NONE
     private var inputUriPosition = 0
     private var trimStartMs: Long = 0
     private var trimEndMs: Long = 0
