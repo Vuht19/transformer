@@ -14,7 +14,6 @@
 -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -39,7 +38,7 @@
         android:layout_marginTop="32dp"
         android:text="Select Audio File"
         android:textSize="12sp"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintEnd_toStartOf="@id/select_local_file_button"
         app:layout_constraintStart_toEndOf="@id/select_preset_file_button"
         app:layout_constraintTop_toBottomOf="@+id/configuration_text_view" />
@@ -113,7 +112,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/select_local_file_button" />
-
     <TextView
         android:id="@+id/selected_file_text_view"
         android:layout_width="0dp"

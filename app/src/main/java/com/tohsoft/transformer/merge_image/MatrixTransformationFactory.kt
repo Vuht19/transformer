@@ -8,15 +8,15 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.effect.MatrixTransformation
 
 @OptIn(UnstableApi::class)
-internal class MatrixTransformationFactory(
+class MatrixTransformationFactory(
     private val durationSeconds: Long = 3,
-    private val percentTransitionTime: Float = 1f / 3
+    private val percentTransitionTime: Float = 0.3f
 ) {
     private val presentationOneTimeUs
         get() = C.MICROS_PER_SECOND * durationSeconds.toFloat()
 
     private val timeTransitionDuration = presentationOneTimeUs * percentTransitionTime
-    private val ratioOfTimeToTransitionTime = 1 / percentTransitionTime
+    private val ratioOfTimeToTransitionTime = 1f / percentTransitionTime
 
     /**
      * Transition ZoomIn
@@ -70,7 +70,6 @@ internal class MatrixTransformationFactory(
             transformationMatrix.postScale(percentagePreviewed, percentagePreviewed)
             val degrees = percentagePreviewed * 360
             transformationMatrix.postRotate(-degrees)
-            Log.d("TAG111: ", "calculateZoomInTransitionMatrix: $percentagePreviewed")
         }
         return transformationMatrix
     }

@@ -8,7 +8,7 @@ import androidx.media3.effect.OverlaySettings
 import com.google.common.collect.ImmutableList
 
 @UnstableApi
-class SlideFadeOverlay(private val bitmap: Bitmap, private val presentationOneTimeUs: Float) :
+class SlideFadeOverlay(private val bitmap: Bitmap, private val presentationOneTimeUs: Float, percentTransitionTime: Float = 0.3f) :
     BitmapOverlay() {
     companion object {
         fun toOverlayEffect(bitmap: Bitmap, presentationOneTimeUs: Float): OverlayEffect {
@@ -21,20 +21,18 @@ class SlideFadeOverlay(private val bitmap: Bitmap, private val presentationOneTi
     }
 
     override fun getOverlaySettings(presentationTimeUs: Long): OverlaySettings {
-        val percentDisplayTimeOfImage = if (presentationTimeUs > presentationOneTimeUs) {
-            (presentationTimeUs % presentationOneTimeUs) / presentationOneTimeUs
-        } else {
-            presentationTimeUs / presentationOneTimeUs
-        }
+        val percentDisplayTimeOfImage = (presentationTimeUs % presentationOneTimeUs) / presentationOneTimeUs
+        val TIME_SHOW_STATIC = 1f - percentDisplayTimeOfImage
         var alpha: Float
         val translate: Float = 1f.coerceAtMost(percentDisplayTimeOfImage)
-        if (translate > 0.5 && presentationTimeUs > 0) {
-            alpha = (1 - percentDisplayTimeOfImage)
-            if (alpha <= 0) {
-                alpha = 0f
-            } else if (alpha > 1f) {
-                alpha = 1f
-            }
+        if (translate > TIME_SHOW_STATIC) {
+            alpha = (translate - TIME_SHOW_STATIC) / (2f * (1f - TIME_SHOW_STATIC))
+            /*  alpha = (1 - percentDisplayTimeOfImage)
+              if (alpha <= 0) {
+                  alpha = 0f
+              } else if (alpha > 1f) {
+                  alpha = 1f
+              }*/
             return OverlaySettings.Builder()
                 .setAlphaScale(alpha)
                 .build()
