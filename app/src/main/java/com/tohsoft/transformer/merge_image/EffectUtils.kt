@@ -87,6 +87,8 @@ class EffectMapper(duration: Long, var size: Size = defaultSize) {
             }
             effects.add(genEffect(type, currentUri, nextUri, map))
         }
+        if (nextUri != null)
+            effects.add(genEffect(type, nextUri, null, map))
         return effects
     }
 
