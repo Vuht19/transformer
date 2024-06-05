@@ -487,10 +487,11 @@ class TransformerActivity : AppCompatActivity() {
 
     private suspend fun createEditedMediaItemList(
         bundle: Bundle,
-        uriList: List<Uri>?,
+        _uriList: List<Uri>?,
         callback: (List<EditedMediaItem>) -> Unit,
     ) {
-        if (uriList == null) return
+        if (_uriList == null) return
+        val uriList = resizeImageList(this, _uriList)
         val transitionVideo = bundle.getInt(Constants.KEY_TRANSITION_VIDEO, -1)
         val effectHelper = EffectMapper(presentationOneTimeUs)
         if (transitionVideo == Constants.RANDOM) {
