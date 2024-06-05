@@ -161,7 +161,7 @@ class ConfigurationActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.clear_data_button).setOnClickListener {
-            mPhotoAdapter.clearAll()
+            mPhotoAdapter.setData(ArrayList())
             localFileUriList = null
             selectedAudioUri = null
         }

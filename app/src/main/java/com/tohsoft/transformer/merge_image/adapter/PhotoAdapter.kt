@@ -68,11 +68,6 @@ class PhotoAdapter : RecyclerView.Adapter<PhotoAdapter.ViewHolder>() {
         }
     }
 
-    fun clearAll() {
-        mPhotoList = ArrayList()
-        notifyCurrentHolderChange()
-    }
-
     inner class ViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
 
         private val ivPreview: ImageView = view.findViewById(R.id.iv_photo_avatar)
