@@ -38,24 +38,26 @@ class EffectMapper(duration: Long, var size: Size = defaultSize) {
     fun genRandomEffects(list: Collection<Uri>, contentResolver: ContentResolver): List<EditedMediaItem> {
         val map = HashMap<Uri, Bitmap>()
         var currentUri: Uri? = null
-        var nextUri: Uri? = null
         val random = Random(System.currentTimeMillis())
         val types = EffectType.entries
         val effects = ArrayList<EditedMediaItem>()
         for (uri in list) {
-            if (nextUri == null) {
-                nextUri = uri
+            if (currentUri == null) {
+                currentUri = uri
                 continue
             }
-            currentUri = nextUri
-            nextUri = uri
             if (!map.contains(uri)) {
                 uri.mapToBitmap(contentResolver, size.width, size.height)?.let {
                     map[uri] = it
                 }
             }
             val type = types[random.nextInt(6)]
-            effects.add(genEffect(type, currentUri, nextUri, map))
+            effects.add(genEffect(type, currentUri, uri, map))
+            currentUri = uri
+        }
+        if (currentUri != null) {
+            val type = types[random.nextInt(6)]
+            effects.add(genEffect(type, currentUri, null, map))
         }
         return effects
     }
@@ -63,8 +65,6 @@ class EffectMapper(duration: Long, var size: Size = defaultSize) {
     fun genEffects(type: EffectType, list: Collection<Uri>, contentResolver: ContentResolver): List<EditedMediaItem> {
         val map = HashMap<Uri, Bitmap>()
         var currentUri: Uri? = null
-        var nextUri: Uri? = null
-        val random = Random(System.currentTimeMillis())
         val effects = ArrayList<EditedMediaItem>()
         val needBitmap = when (type) {
             EffectType.FADE, EffectType.SLIDE_LEFT, EffectType.SLIDE_RIGHT -> {
@@ -74,19 +74,20 @@ class EffectMapper(duration: Long, var size: Size = defaultSize) {
             else -> false
         }
         for (uri in list) {
-            if (nextUri == null) {
-                nextUri = uri
+            if (currentUri == null) {
+                currentUri = uri
                 continue
             }
-            currentUri = nextUri
-            nextUri = uri
             if (needBitmap && !map.contains(uri)) {
                 uri.mapToBitmap(contentResolver, size.width, size.height)?.let {
                     map[uri] = it
                 }
             }
-            effects.add(genEffect(type, currentUri, nextUri, map))
+            effects.add(genEffect(type, currentUri, uri, map))
+            currentUri = uri
         }
+        if (currentUri != null)
+            effects.add(genEffect(type, currentUri, null, map))
         return effects
     }
 
