@@ -27,18 +27,17 @@ class SlideFadeOverlay(private val bitmap: Bitmap, private val presentationOneTi
         val translate: Float = 1f.coerceAtMost(percentDisplayTimeOfImage)
         if (translate > TIME_SHOW_STATIC) {
             alpha = (translate - TIME_SHOW_STATIC) / (2f * (1f - TIME_SHOW_STATIC))
-            /*  alpha = (1 - percentDisplayTimeOfImage)
+            alpha = (1 - percentDisplayTimeOfImage)
               if (alpha <= 0) {
                   alpha = 0f
               } else if (alpha > 1f) {
                   alpha = 1f
-              }*/
+              }
             return OverlaySettings.Builder()
                 .setAlphaScale(alpha)
                 .build()
         }
         return OverlaySettings.Builder()
-            .setAlphaScale(0f)
             .build()
 
     }
