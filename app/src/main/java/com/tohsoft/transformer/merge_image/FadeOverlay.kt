@@ -37,12 +37,12 @@ class FadeOverlay(private val bitmap: Bitmap, private val presentationOneTimeUs:
                 alpha = 1f
             }
             return OverlaySettings.Builder()
-                .setAlphaScale(alpha)
+                .setAlpha(alpha)
                 .build()
 
         }
         return OverlaySettings.Builder()
-            .setAlphaScale(0f)
+            .setAlpha(0f)
             .build()
 
     }

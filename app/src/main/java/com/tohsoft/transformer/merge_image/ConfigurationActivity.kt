@@ -964,19 +964,19 @@ class ConfigurationActivity : AppCompatActivity() {
         )
         private val HDR_MODE_DESCRIPTIONS: ImmutableMap<String, Int> =
             ImmutableMap.Builder<String, Int>()
-                .put("Keep HDR", Composition.HDR_MODE_KEEP_HDR)
-                .put(
-                    "MediaCodec tone-map HDR to SDR",
-                    Composition.HDR_MODE_TONE_MAP_HDR_TO_SDR_USING_MEDIACODEC
-                )
-                .put(
-                    "OpenGL tone-map HDR to SDR",
-                    Composition.HDR_MODE_TONE_MAP_HDR_TO_SDR_USING_OPEN_GL
-                )
-                .put(
-                    "Force Interpret HDR as SDR",
-                    Composition.HDR_MODE_EXPERIMENTAL_FORCE_INTERPRET_HDR_AS_SDR
-                )
+//                .put("Keep HDR", Composition.HDR_MODE_KEEP_HDR)
+//                .put(
+//                    "MediaCodec tone-map HDR to SDR",
+//                    Composition.HDR_MODE_TONE_MAP_HDR_TO_SDR_USING_MEDIACODEC
+//                )
+//                .put(
+//                    "OpenGL tone-map HDR to SDR",
+//                    Composition.HDR_MODE_TONE_MAP_HDR_TO_SDR_USING_OPEN_GL
+//                )
+//                .put(
+//                    "Force Interpret HDR as SDR",
+//                    Composition.HDR_MODE_EXPERIMENTAL_FORCE_INTERPRET_HDR_AS_SDR
+//                )
                 .build()
         private val OVERLAY_COLORS: ImmutableMap<String, Int> = ImmutableMap.Builder<String, Int>()
             .put("BLACK", Color.BLACK)

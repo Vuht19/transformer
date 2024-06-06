@@ -34,11 +34,11 @@ class SlideFadeOverlay(private val bitmap: Bitmap, private val presentationOneTi
                   alpha = 1f
               }*/
             return OverlaySettings.Builder()
-                .setAlphaScale(alpha)
+                .setAlpha(alpha)
                 .build()
         }
         return OverlaySettings.Builder()
-            .setAlphaScale(0f)
+            .setAlpha(0f)
             .build()
 
     }

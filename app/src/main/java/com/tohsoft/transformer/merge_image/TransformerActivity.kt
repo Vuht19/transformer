@@ -64,7 +64,6 @@ import androidx.media3.transformer.Effects
 import androidx.media3.transformer.ExportException
 import androidx.media3.transformer.ExportResult
 import androidx.media3.transformer.InAppMuxer
-import androidx.media3.transformer.JsonUtil
 import androidx.media3.transformer.Muxer
 import androidx.media3.transformer.ProgressHolder
 import androidx.media3.transformer.Transformer
@@ -265,13 +264,13 @@ class TransformerActivity : AppCompatActivity() {
         )
         if (bundle != null) {
             val audioMimeType = bundle.getString(ConfigurationActivity.AUDIO_MIME_TYPE)
-            if (audioMimeType != null) {
-                transformerBuilder.setAudioMimeType(audioMimeType)
-            }
-            val videoMimeType = bundle.getString(ConfigurationActivity.VIDEO_MIME_TYPE)
-            if (videoMimeType != null) {
-                transformerBuilder.setVideoMimeType(videoMimeType)
-            }
+//            if (audioMimeType != null) {
+//                transformerBuilder.setAudioMimeType(audioMimeType)
+//            }
+//            val videoMimeType = bundle.getString(ConfigurationActivity.VIDEO_MIME_TYPE)
+//            if (videoMimeType != null) {
+//                transformerBuilder.setVideoMimeType(videoMimeType)
+//            }
             val fataBack = bundle.getBoolean(ConfigurationActivity.ENABLE_FALLBACK, false)
             transformerBuilder.setEncoderFactory(
                 DefaultEncoderFactory.Builder(this.applicationContext)
@@ -287,10 +286,8 @@ class TransformerActivity : AppCompatActivity() {
             var muxerFactory: Muxer.Factory = DefaultMuxer.Factory(maxDelayBetweenSamplesMs)
             if (bundle.getBoolean(ConfigurationActivity.PRODUCE_FRAGMENTED_MP4)) {
                 muxerFactory =
-                    InAppMuxer.Factory.Builder()
-                        .setMaxDelayBetweenSamplesMs(maxDelayBetweenSamplesMs)
-                        .setFragmentedMp4Enabled(true)
-                        .build()
+                    InAppMuxer.Factory(maxDelayBetweenSamplesMs,null).apply {
+                    }
             }
             transformerBuilder.setMuxerFactory(muxerFactory)
 
@@ -364,12 +361,11 @@ class TransformerActivity : AppCompatActivity() {
 
                     val compositionBuilder = if (backgroundAudioSequence != null) {
                         Composition.Builder(
-                            EditedMediaItemSequence(editedMediaItemList),
-                            backgroundAudioSequence
+                            mutableListOf(EditedMediaItemSequence(editedMediaItemList),backgroundAudioSequence)
                         )
                     } else {
                         Composition.Builder(
-                            EditedMediaItemSequence(editedMediaItemList),
+                            mutableListOf(EditedMediaItemSequence(editedMediaItemList)),
                         )
                     }
 //                        .setHdrMode(bundle.getInt(ConfigurationActivity.HDR_MODE))
@@ -385,11 +381,11 @@ class TransformerActivity : AppCompatActivity() {
                             if (oldOutputFile == null) {
                                 it.start(composition, outputFilePath)
                             } else {
-                                it.resume(
-                                    composition,
-                                    outputFilePath,
-                                    oldOutputFile!!.absolutePath
-                                )
+//                                it.resume(
+//                                    composition,
+//                                    outputFilePath,
+//                                    oldOutputFile!!.absolutePath
+//                                )
                             }
                         }
 
@@ -570,7 +566,7 @@ class TransformerActivity : AppCompatActivity() {
 //        if (selectedEffects[ConfigurationActivity.BITMAP_OVERLAY_INDEX]) {
 //            val overlaySettings =
 //                OverlaySettings.Builder()
-//                    .setAlphaScale(
+//                    .setAlpha(
 //                        bundle.getFloat(
 //                            ConfigurationActivity.BITMAP_OVERLAY_ALPHA,  /* defaultValue= */1f
 //                        )
@@ -587,7 +583,7 @@ class TransformerActivity : AppCompatActivity() {
 //        if (selectedEffects[ConfigurationActivity.TEXT_OVERLAY_INDEX]) {
 //            val overlaySettings =
 //                OverlaySettings.Builder()
-//                    .setAlphaScale(
+//                    .setAlpha(
 //                        bundle.getFloat(
 //                            ConfigurationActivity.TEXT_OVERLAY_ALPHA,  /* defaultValue= */
 //                            1f
@@ -634,31 +630,31 @@ class TransformerActivity : AppCompatActivity() {
         outputVideoTextView!!.visibility = View.VISIBLE
         debugTextView!!.visibility = View.VISIBLE
 //        displayInputButton!!.visibility = View.VISIBLE
-        Log.d(TAG, DebugTraceUtil.generateTraceSummary())
-        val file = File(getExternalFilesDir(null), "trace.tsv")
-        try {
-            BufferedWriter(FileWriter(file)).use { writer ->
-                DebugTraceUtil.dumpTsv(writer)
-                Log.d(TAG, file.absolutePath)
-            }
-        } catch (e: IOException) {
-            throw RuntimeException(e)
-        }
+//        Log.d(TAG, DebugTraceUtil.generateTraceSummary())
+//        val file = File(getExternalFilesDir(null), "trace.tsv")
+//        try {
+//            BufferedWriter(FileWriter(file)).use { writer ->
+//                DebugTraceUtil.dumpTsv(writer)
+//                Log.d(TAG, file.absolutePath)
+//            }
+//        } catch (e: IOException) {
+//            throw RuntimeException(e)
+//        }
         outputFile?.toUri()?.let {
             playMediaItems(MediaItem.fromUri(it))
         }
-        Log.d(TAG, "Output file path: file://$filePath")
-        try {
-            val resultJson =
-                JsonUtil.exportResultAsJsonObject(exportResult)
-                    .put("elapsedTimeMs", elapsedTimeMs)
-                    .put("device", JsonUtil.getDeviceDetailsAsJsonObject())
-            for (line in Util.split(resultJson.toString(2), "\n")) {
-                Log.d(TAG, line)
-            }
-        } catch (e: JSONException) {
-            Log.d(TAG, "Unable to convert exportResult to JSON", e)
-        }
+//        Log.d(TAG, "Output file path: file://$filePath")
+//        try {
+//            val resultJson =
+//                JsonUtil.exportResultAsJsonObject(exportResult)
+//                    .put("elapsedTimeMs", elapsedTimeMs)
+//                    .put("device", JsonUtil.getDeviceDetailsAsJsonObject())
+//            for (line in Util.split(resultJson.toString(2), "\n")) {
+//                Log.d(TAG, line)
+//            }
+//        } catch (e: JSONException) {
+//            Log.d(TAG, "Unable to convert exportResult to JSON", e)
+//        }
     }
 
     private fun playMediaItems(outputMediaItem: MediaItem) {
