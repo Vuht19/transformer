@@ -295,7 +295,7 @@ class TransformerActivity : AppCompatActivity() {
             transformerBuilder.setMuxerFactory(muxerFactory)
 
             if (bundle.getBoolean(ConfigurationActivity.ENABLE_DEBUG_PREVIEW)) {
-                transformerBuilder.setDebugViewProvider(DemoDebugViewProvider())
+//                transformerBuilder.setDebugViewProvider(DemoDebugViewProvider())
             }
         }
 
